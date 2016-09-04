@@ -7,10 +7,21 @@ source ./config.sh
 
 function setup_packages()
 {
-	opkg update
-	opkg install kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils
-	opkg install git-http bash wget ca-certificates
-	opkg install php5 php5-cli
+	updated=0
+	packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils   git-http bash wget ca-certificates   php5 php5-cli"
+	for package in $packages
+	do
+		if opkg list-installed | grep "^$package "
+		then
+			continue
+		fi
+		if [ $updated -eq 0 ]
+		then
+			opkg update
+			updated=1
+		fi
+		opkg install $package
+	done
 }
 
 function setup_wifi()
