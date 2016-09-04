@@ -3,11 +3,12 @@
 
 source ./config.sh
 
+### root:x:0:0:root:/root:/bin/bash
 
 function setup_packages()
 {
 	opkg update
-	opkg install kmod-usb2 kmod-usb-hid usbutils
+	opkg install kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils
 	opkg install git-http bash wget ca-certificates
 	opkg install php5 php5-cli
 }
