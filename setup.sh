@@ -33,11 +33,17 @@ function setup_gpio()
 {
 	for i in $GPIO_LED_RED $GPIO_LED_GREEN $GPIO_LED_BLUE $GPIO_BUZ $GPIO_USB $GPIO_MAG
 	do
-		echo -n $i...
+		echo -n $i:out...
 		echo $i  2>/dev/null > /sys/class/gpio/export
 		echo out 2>/dev/null > /sys/class/gpio/gpio$i/direction
 		echo 0   2>/dev/null > /sys/class/gpio/gpio$i/value
 	done
+	for i in $GPIO_BTN
+	do
+		echo -n $i:in...
+		echo $i 2>/dev/null > /sys/class/gpio/export
+		echo in 2>/dev/null > /sys/class/gpio/gpio$i/direction
+	done 
 }
 
 function setup_paths()
