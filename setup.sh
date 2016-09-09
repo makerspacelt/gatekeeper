@@ -71,4 +71,11 @@ setup_paths
 echo
 
 
+echo -n 'resetting usb ...'
+echo -n 1 >/sys/class/gpio/gpio${GPIO_USB}/value
+sleep 1
+echo -n 0 >/sys/class/gpio/gpio${GPIO_USB}/value
+sleep 3
+echo
+
 

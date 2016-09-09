@@ -20,6 +20,8 @@
 
 source ./config.sh
 
+trap 'pkill -P $$' EXIT
+
 
 translate_data()
 {
@@ -30,15 +32,24 @@ translate_data()
 
 led()
 {
-	echo $1 > /sys/devices/gpio-leds/leds/a5-v11\:red\:power/brightness
-	echo $1 > /sys/devices/gpio-leds/leds/a5-v11\:blue\:system/brightness
+	echo -n $2 > /sys/class/gpio/gpio$1/value
 }
 
 open_door()
 {
-	led 1
+
+	led $GPIO_BUZ 1
+
+	led $GPIO_MAG 1
+	led $GPIO_LED_GREEN 1
+
+	ping -qc1 localhost >/dev/null
+	led $GPIO_BUZ 0
+	
 	sleep $DOOR_DELAY
-	led 0
+
+	led $GPIO_MAG 0
+	led $GPIO_LED_GREEN 0
 }
 
 access()
@@ -58,6 +69,11 @@ access()
 				open_door
 			else
 				echo "NoAccess: $CID"
+				led $GPIO_LED_RED 1
+				led $GPIO_BUZ 1
+				sleep 1
+				led $GPIO_LED_RED 0
+				led $GPIO_BUZ 0
 			fi
 		fi
 	done < $FIFO_FILE
