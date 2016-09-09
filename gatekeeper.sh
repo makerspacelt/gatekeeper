@@ -62,7 +62,7 @@ open_exit()
 	while true
 	do
 		state=$(io $GPIO_BTN)
-		if [ $state -eq 0 ]
+		if [ $state -eq 1 ]
 		then
 			echo "OpenDoor: button_press"
 			open_door
