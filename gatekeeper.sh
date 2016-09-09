@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # this is simple script to open the door after RFID card swipe.
@@ -146,10 +146,13 @@ do
 	if [ ! -c $READ_DEVICE ]
 	then
 		echo "ERROR: HID device gone missing"
-		io $GPIO_LED_RED 1
-		io $GPIO_LED_GREEN 1
-		IO $GPIO_LED_BLUE 1
-		sleep 15
+		for i in {1..15}
+		do
+			io $GPIO_LED_RED 1 ; io $GPIO_LED_GREEN 1 ; io $GPIO_LED_BLUE 1 ; io $GPIO_BUZ 1
+			sleep .7
+			io $GPIO_LED_RED 0 ; io $GPIO_LED_GREEN 0 ; io $GPIO_LED_BLUE 0 ; io $GPIO_BUZ 0
+			sleep .3
+		done
 		reboot
 	fi
 done
