@@ -108,6 +108,21 @@ access_denied()
 	io $GPIO_BUZ 0
 }
 
+heartbeat()
+{
+	while true
+	do
+		if ping -nc1 -w1 ip.at.lt &>/dev/null
+		then
+			io $GPIO_LED_BLUE 1 ; sleep .1 ; io $GPIO_LED_BLUE 0 ; sleep .2
+			io $GPIO_LED_BLUE 1 ; sleep .1 ; io $GPIO_LED_BLUE 0 ; sleep .2
+		else
+			io $GPIO_LED_BLUE 1 ; sleep 2 ; io $GPIO_LED_BLUE 0
+		fi
+		sleep .5
+	done
+}
+
 echo 'Starting data processor'
 translate_data &
 sleep 1
@@ -120,6 +135,10 @@ echo 'Starting exit process'
 open_exit &                                                        
 sleep 1
 
+echo 'Starting heartbeat process'
+heartbeat &
+sleep 1
+
 echo 'Starting watchdog'
 while true
 do
@@ -128,6 +147,8 @@ do
 	then
 		echo "ERROR: HID device gone missing"
 		io $GPIO_LED_RED 1
+		io $GPIO_LED_GREEN 1
+		IO $GPIO_LED_BLUE 1
 		sleep 15
 		reboot
 	fi
