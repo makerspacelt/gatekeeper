@@ -30,33 +30,52 @@ translate_data()
 	cat $READ_DEVICE | tr '\36\37\40\41\42\43\44\45\46\47\50' "1234567890\n" > $FIFO_FILE
 }
 
-led()
+io()
 {
-	echo -n $2 > /sys/class/gpio/gpio$1/value
+	if [ -z "$2" ]
+	then
+		cat /sys/class/gpio/gpio$1/value
+	else
+		echo -n $2 > /sys/class/gpio/gpio$1/value
+	fi
 }
 
 open_door()
 {
 
-	led $GPIO_BUZ 1
+	io $GPIO_BUZ 1
 
-	led $GPIO_MAG 1
-	led $GPIO_LED_GREEN 1
+	io $GPIO_MAG 1
+	io $GPIO_LED_GREEN 1
 
-	ping -qc1 localhost >/dev/null
-	led $GPIO_BUZ 0
+	sleep .1
+	io $GPIO_BUZ 0
 	
 	sleep $DOOR_DELAY
 
-	led $GPIO_MAG 0
-	led $GPIO_LED_GREEN 0
+	io $GPIO_MAG 0
+	io $GPIO_LED_GREEN 0
+}
+
+open_exit()
+{
+	while true
+	do
+		state=$(io $GPIO_BTN)
+		if [ $state -eq 0 ]
+		then
+			echo "OpenDoor: button_press"
+			open_door
+		fi
+		sleep 0.1
+	done
 }
 
 access()
 {
 	mkdir -p $CARD_PATH
 	mkdir -p $USER_PATH
-	led 0
+	io $GPIO_MAG 0
 	while true
 	do
 		if read CID
@@ -64,30 +83,41 @@ access()
 			echo "CardSwipe: $CID"
 			if [ -L $CARD_PATH/$CID ]
 			then
-				NAME=$(basename $(readlink $CARD_PATH/$CID))
-				echo "OpenDoor: card($CID) user($NAME)"
-				open_door
+				if [ -f $CARD_PATH/$(readlink $CARD_PATH/$CID) ]
+				then
+					NAME=$(basename $(readlink $CARD_PATH/$CID))
+					echo "OpenDoor: card($CID) user($NAME)"
+					open_door
+				else
+					access_denied "$CID $(readlink $CARD_PATH/$CID)"
+				fi
 			else
-				echo "NoAccess: $CID"
-				led $GPIO_LED_RED 1
-				led $GPIO_BUZ 1
-				sleep 1
-				led $GPIO_LED_RED 0
-				led $GPIO_BUZ 0
+				access_denied $CID
 			fi
 		fi
 	done < $FIFO_FILE
 }
 
+access_denied()
+{
+	echo "NoAccess: $1"
+	io $GPIO_LED_RED 1
+	io $GPIO_BUZ 1
+	sleep 1
+	io $GPIO_LED_RED 0
+	io $GPIO_BUZ 0
+}
 
 echo 'Starting data processor'
 translate_data &
-P1=$!
 sleep 1
 
-echo 'Starting main process'
+echo 'Starting access process'
 access &
-P2=$!
+sleep 1
+
+echo 'Starting exit process'                                  
+open_exit &                                                        
 sleep 1
 
 echo 'Starting watchdog'
@@ -97,7 +127,9 @@ do
 	if [ ! -c $READ_DEVICE ]
 	then
 		echo "ERROR: HID device gone missing"
-		kill $P1 $P2
-		exit 1
+		io $GPIO_LED_RED 1
+		sleep 15
+		reboot
 	fi
 done
+
