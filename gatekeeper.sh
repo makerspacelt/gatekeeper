@@ -114,12 +114,12 @@ heartbeat()
 	do
 		if ping -nc1 -w1 ip.at.lt &>/dev/null
 		then
-			io $GPIO_LED_BLUE 1 ; sleep .1 ; io $GPIO_LED_BLUE 0 ; sleep .2
-			io $GPIO_LED_BLUE 1 ; sleep .1 ; io $GPIO_LED_BLUE 0 ; sleep .2
+			io $GPIO_LED_BLUE 1 ; sleep .01 ; io $GPIO_LED_BLUE 0 ; sleep .2
+			io $GPIO_LED_BLUE 1 ; sleep .01 ; io $GPIO_LED_BLUE 0 ; sleep .2
 		else
 			io $GPIO_LED_BLUE 1 ; sleep 2 ; io $GPIO_LED_BLUE 0
 		fi
-		sleep .5
+		sleep 1
 	done
 }
 
