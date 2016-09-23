@@ -67,7 +67,7 @@ open_exit()
 			echo "OpenDoor: button_press"
 			open_door
 		fi
-		sleep 0.1
+		sleep 0.001
 	done
 }
 
