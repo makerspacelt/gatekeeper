@@ -1,11 +1,12 @@
 
 DIR=/root/gatekeeper
+ETC=/etc/gatekeeper
 
 DOOR_DELAY=5
 READ_DEVICE=/dev/hidraw0
 FIFO_FILE=$DIR/card.fifo
-CARD_PATH=$DIR/cards
-USER_PATH=$DIR/users
+CARD_PATH=$ETC/cards
+USER_PATH=$ETC/users
 
 
 GPIO_BTN=22
