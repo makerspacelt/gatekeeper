@@ -32,6 +32,7 @@ function setup_wifi()
 function setup_remote_syslog()
 {
 	uci set system.@system[0].log_ip='192.168.2.2'
+	uci set system.@system[0].log_proto='tcp'
 	uci commit
 }
 
