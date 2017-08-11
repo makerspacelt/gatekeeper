@@ -29,6 +29,12 @@ function setup_wifi()
 	echo TODO
 }
 
+function setup_remote_syslog()
+{
+	uci set system.@system[0].log_ip='192.168.2.2'
+	uci commit
+}
+
 function setup_gpio()
 {
 	for i in $GPIO_LED_RED $GPIO_LED_GREEN $GPIO_LED_BLUE $GPIO_BUZ $GPIO_USB $GPIO_MAG
@@ -68,6 +74,11 @@ echo
 
 echo -n 'setting up paths ...'
 setup_paths
+echo
+
+
+echo -n 'setting up remote logging ...'
+setup_remote_syslog
 echo
 
 
