@@ -36,6 +36,15 @@ function setup_remote_syslog()
 	uci commit
 }
 
+function setup_cronjobs()
+{
+	echo '*/2 * * * *  logread | grep -q "disabled by hub (EMI[?])" && sleep 70 && touch /etc/banner && logger -t MAGLOCK "EMI reboot" && sleep 5 && reboot' > /etc/crontabs/root
+	echo >> /etc/crontabs/root
+
+	/etc/init.d/cron enable
+	/etc/init.d/cron start
+}
+
 function setup_gpio()
 {
 	for i in $GPIO_LED_RED $GPIO_LED_GREEN $GPIO_LED_BLUE $GPIO_BUZ $GPIO_USB $GPIO_MAG
@@ -88,6 +97,11 @@ echo -n 1 >/sys/class/gpio/gpio${GPIO_USB}/value
 sleep 1
 echo -n 0 >/sys/class/gpio/gpio${GPIO_USB}/value
 sleep 3
+echo
+
+
+echo -n 'setting up cronjobs ...'
+setup_cronjobs
 echo
 
 
