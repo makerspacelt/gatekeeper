@@ -81,18 +81,13 @@ access()
 		if read CID
 		then
 			echo "CardSwipe: $CID"
-			if [ -L $CARD_PATH/$CID ]
+
+			if msg=$(./dbreader.lua "$CID")
 			then
-				if [ -f $CARD_PATH/$(readlink $CARD_PATH/$CID) ]
-				then
-					NAME=$(basename $(readlink $CARD_PATH/$CID))
-					echo "OpenDoor: card($CID) user($NAME)"
-					open_door
-				else
-					access_denied "$CID $(readlink $CARD_PATH/$CID)"
-				fi
+				echo "OpenDoor: card($CID) user($msg)"
+				open_door
 			else
-				access_denied $CID
+				access_denied "$msg"
 			fi
 		fi
 	done < $FIFO_FILE
