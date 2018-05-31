@@ -8,7 +8,7 @@ source ./config.sh
 function setup_packages()
 {
 	updated=0
-	packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils   git-http bash coreutils-sleep procps-ng-pkill wget ca-certificates   php5 php5-cli"
+	packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils   git-http bash coreutils-sleep procps-ng-pkill wget ca-certificates   php5 php5-cli  luci-lib-jsonc"
 	for package in $packages
 	do
 		if opkg list-installed | grep "^$package "
