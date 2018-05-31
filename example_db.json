@@ -1,0 +1,39 @@
+{
+   "users":{
+      "John_Smith":{
+         "active":true,
+         "cards":{
+            "123456789":{
+               "active":true
+            },
+            "987654321":{
+               "active":false
+            }
+         },
+         "tools":[
+            "lathe1",
+            "laser1"
+         ]
+      },
+      "Foo_Bar":{
+         "active":false,
+         "cards":{
+            "234567890":{
+               "active":true
+            }
+         },
+         "tools":[
+            "laser1"
+         ]
+      }
+   },
+
+   "tools":{
+      "lathe1":{
+         "mac":"00:11:22:33:44:55"
+      },
+      "laser1":{
+         "mac":"55:44:33:22:11:00"
+      }
+   }
+}
