@@ -38,7 +38,9 @@ function setup_remote_syslog()
 
 function setup_cronjobs()
 {
-	echo '*/2 * * * *  logread | grep -q "disabled by hub (EMI[?])" && sleep 70 && touch /etc/banner && logger -t MAGLOCK "EMI reboot" && sleep 5 && reboot' > /etc/crontabs/root
+	echo > /etc/crontabs/root
+	echo '*/2 * * * *  logread | grep -q "disabled by hub (EMI[?])" && sleep 70 && touch /etc/banner && logger -t MAGLOCK "EMI reboot" && sleep 5 && reboot' >> /etc/crontabs/root
+	echo "*/5 * * * *  cd /etc/space-db && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull && logger -t MAGLOCK space-db updated || logger -t MAGLOCK space-db update failed" >> /etc/crontabs/root
 	echo >> /etc/crontabs/root
 
 	/etc/init.d/cron enable
