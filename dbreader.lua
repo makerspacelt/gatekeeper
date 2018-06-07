@@ -9,7 +9,7 @@ if reqId == nil or reqId == "" then
 	os.exit(99)
 end
 
-file = io.open("/etc/gatekeeper/db.json", "r")
+file = io.open("/etc/space-db/db.json", "r")
 if not file then
 	print("Database file not found")
 	os.exit(99)
