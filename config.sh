@@ -1,6 +1,6 @@
 
 DIR=/root/gatekeeper
-ETC=/etc/gatekeeper
+ETC=/etc/space-db
 
 DOOR_DELAY=5
 READ_DEVICE=/dev/hidraw0
