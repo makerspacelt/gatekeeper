@@ -24,11 +24,6 @@ function setup_packages()
 	done
 }
 
-function setup_wifi()
-{
-	echo TODO
-}
-
 function setup_remote_syslog()
 {
 	uci set system.@system[0].log_ip='192.168.1.254'
