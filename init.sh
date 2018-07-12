@@ -1,6 +1,6 @@
 #!/bin/ash
 
-source config.sh
+source ./config.sh
 
 echo "Setting up system settings"
 
@@ -32,20 +32,40 @@ uci commit dhcp
 
 /etc/init.d/network restart
 
-sleep 10
+echo -n "Waiting for network "
+while ! ping -c 1 1.1.1.1 &> /dev/null; do
+	echo -n "."
+	sleep 1
+done
+echo
 
-opkg update
-opkg install git
+echo "Installing packages ...."
+updated=0
+packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils  git bash coreutils-sleep procps-ng-pkill  lua luci-lib-jsonc"
 
-echo "Creating ssh key"
-mkdir -p /root/.ssh
-dropbearkey -t rsa -f /root/.ssh/id_rsa
+for package in $packages
+do
+	if opkg list-installed | grep "^$package "
+	then
+		continue
+	fi
+	if [ $updated -eq 0 ]
+	then
+		opkg update
+		updated=1
+	fi
+	opkg install $package
+done
 
-read -p "Add deploy key to gitlab and press any key..."
+echo "Checking ssh keys ...."
+if [ -f "/root/.ssh/id_rsa" ]; then
+		echo "Keys exist skip ..."
+else
+		mkdir -p /root/.ssh
+		dropbearkey -t rsa -f /root/.ssh/id_rsa | grep ^ssh > /root/.ssh/id_rsa.pub
+fi
 
-mkdir -p /etc/space-db
-cd /etc/space-db
-GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git clone $DB_REPO .
+mkdir -p $ETC
 
 cat > /etc/rc.local << EOF
 sleep 2
@@ -55,6 +75,5 @@ cd /root/gatekeeper
 exit 0
 EOF
 
-read -p "Press any key to reboot ..."
 halt
 

@@ -5,25 +5,6 @@ source ./config.sh
 
 ### root:x:0:0:root:/root:/bin/bash
 
-function setup_packages()
-{
-	updated=0
-	packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils   git-http bash coreutils-sleep procps-ng-pkill wget ca-certificates   php5 php5-cli  lua luci-lib-jsonc"
-	for package in $packages
-	do
-		if opkg list-installed | grep "^$package "
-		then
-			continue
-		fi
-		if [ $updated -eq 0 ]
-		then
-			opkg update
-			updated=1
-		fi
-		opkg install $package
-	done
-}
-
 function setup_remote_syslog()
 {
 	uci set system.@system[0].log_ip='192.168.1.254'
@@ -35,7 +16,7 @@ function setup_cronjobs()
 {
 	echo > /etc/crontabs/root
 	echo '*/2 * * * *  logread | grep -q "disabled by hub (EMI[?])" && sleep 70 && touch /etc/banner && logger -t MAGLOCK "EMI reboot" && sleep 5 && reboot' >> /etc/crontabs/root
-	echo "*/5 * * * *  cd /etc/space-db && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull && logger -t MAGLOCK space-db updated || logger -t MAGLOCK space-db update failed" >> /etc/crontabs/root
+	echo "*/5 * * * *  cd $ETC && export GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' && if [ -f db.json ]; then git pull; else git clone $DB_REPO .; fi && logger -t MAGLOCK space-db updated || logger -t MAGLOCK space-db update failed" >> /etc/crontabs/root
 	echo >> /etc/crontabs/root
 
 	/etc/init.d/cron enable
@@ -63,15 +44,7 @@ function setup_paths()
 {
 	rm -f $FIFO_FILE
 	mkfifo $FIFO_FILE
-
-	mkdir -p $CARD_PATH
-	mkdir -p $USER_PATH
 }
-
-
-echo -n 'setting up packages ...'
-setup_packages
-echo
 
 
 echo -n 'setting up GPIO ...'

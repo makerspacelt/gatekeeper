@@ -5,8 +5,6 @@ ETC=/etc/space-db
 DOOR_DELAY=5
 READ_DEVICE=/dev/hidraw0
 FIFO_FILE=$DIR/card.fifo
-CARD_PATH=$ETC/cards
-USER_PATH=$ETC/users
 
 
 GPIO_BTN=22
@@ -17,6 +15,7 @@ GPIO_BUZ=12
 GPIO_USB=9
 GPIO_MAG=8
 
+DEVICE="/dev/ttyUSB0"
 SSID=""
 SSID_KEY=""
 DB_REPO=""

@@ -73,8 +73,6 @@ open_exit()
 
 access()
 {
-	mkdir -p $CARD_PATH
-	mkdir -p $USER_PATH
 	io $GPIO_MAG 0
 	while true
 	do
