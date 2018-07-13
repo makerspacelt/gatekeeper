@@ -16,7 +16,7 @@ function setup_cronjobs()
 {
 	echo > /etc/crontabs/root
 	echo '*/2 * * * *  logread | grep -q "disabled by hub (EMI[?])" && sleep 70 && touch /etc/banner && logger -t MAGLOCK "EMI reboot" && sleep 5 && reboot' >> /etc/crontabs/root
-	echo "*/5 * * * *  cd $ETC && export GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' && if [ -f db.json ]; then git pull; else git clone $DB_REPO .; fi && logger -t MAGLOCK space-db updated || logger -t MAGLOCK space-db update failed" >> /etc/crontabs/root
+	echo "*/5 * * * *  cd $ETC && export GIT_SSH_COMMAND='ssh -y -i /root/.ssh/id_rsa' && if [ -f db.json ]; then git pull; else git clone $DB_REPO .; fi && logger -t MAGLOCK space-db updated || logger -t MAGLOCK space-db update failed" >> /etc/crontabs/root
 	echo >> /etc/crontabs/root
 
 	/etc/init.d/cron enable
