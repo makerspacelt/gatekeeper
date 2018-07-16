@@ -5,6 +5,8 @@ source ./config.sh
 echo "Setting up system settings"
 
 uci set system.@system[0].hostname='gatekeeper'
+uci set system.@system[0].zonename='Europe/Vilnius'
+uci set system.@system[0].timezone='EET-2EEST,M3.5.0/3,M10.5.0/4'
 uci commit system
 
 uci set network.wan=interface
