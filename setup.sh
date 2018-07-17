@@ -32,7 +32,7 @@ function setup_gpio()
 		echo out 2>/dev/null > /sys/class/gpio/gpio$i/direction
 		echo 0   2>/dev/null > /sys/class/gpio/gpio$i/value
 	done
-	for i in $GPIO_BTN
+	for i in $GPIO_BTN $GPIO_DOOR
 	do
 		echo -n $i:in...
 		echo $i 2>/dev/null > /sys/class/gpio/export
