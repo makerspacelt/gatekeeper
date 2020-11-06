@@ -84,6 +84,9 @@ access()
 			then
 				echo "OpenDoor: card($CID) user($msg)"
 				open_door
+				curl    -X POST "https://hooks.slack.com/workflows/$SLACK_ID" \
+					-H 'Content-Type: application/json' \
+					-d "{\"name\": \"$msg\"}"
 			else
 				access_denied "$msg"
 			fi

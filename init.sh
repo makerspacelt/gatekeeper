@@ -43,7 +43,10 @@ echo
 
 echo "Installing packages ...."
 updated=0
-packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils  git bash coreutils-sleep procps-ng-pkill  lua luci-lib-jsonc"
+packages="kmod-usb2 kmod-usb-uhci kmod-usb-ohci kmod-usb-hid usbutils \
+	git bash coreutils-sleep procps-ng-pkill \
+	lua luci-lib-jsonc \
+	curl ca-certificates ca-bundle"
 
 for package in $packages
 do

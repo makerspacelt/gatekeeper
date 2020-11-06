@@ -2,7 +2,7 @@
 DIR=/root/gatekeeper
 ETC=/etc/space-db
 
-DOOR_DELAY=5
+DOOR_DELAY=3
 READ_DEVICE=/dev/hidraw0
 FIFO_FILE=$DIR/card.fifo
 
@@ -20,4 +20,5 @@ DEVICE="/dev/ttyUSB0"
 SSID=""
 SSID_KEY=""
 DB_REPO=""
+SLACK_ID=""
 
