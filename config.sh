@@ -21,4 +21,5 @@ SSID=""
 SSID_KEY=""
 DB_REPO=""
 SLACK_ID=""
+LOG_SERVER_IP=""
 
