@@ -7,7 +7,7 @@ source ./config.sh
 
 function setup_remote_syslog()
 {
-	uci set system.@system[0].log_ip='192.168.1.254'
+	uci set system.@system[0].log_ip="$LOG_SERVER_IP"
 	uci set system.@system[0].log_proto='tcp'
 	uci commit
 }
