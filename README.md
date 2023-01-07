@@ -1,3 +1,1 @@
-
-
-schematics and PCB: https://easyeda.com/dariuskt/vocore_lock-SQJDVP7pH
+Schematics and PCB: https://github.com/makerspacelt/maglock-hw
