@@ -6,6 +6,7 @@ const scripts = [
   'gpio.js',
   'mqtt.js',
   'rfid.js',
+  'get-temperature.js',
 ]
 
 const workers = []

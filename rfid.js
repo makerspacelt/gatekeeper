@@ -1,5 +1,8 @@
 const fs = require('fs')
+const { sendMessageFactory } = require('./utils')
 const { parentPort } = require('worker_threads')
+
+const sendMessage = sendMessageFactory('rfid', parentPort)
 
 const ACCESS_DB_FILE = '/etc/space-db/db.json'
 
@@ -20,16 +23,12 @@ const HID_TABLE = {
 let bufferUpdateAt = 0
 let keyBuffer = []
 
-function sendMessage(msg) {
-    parentPort.postMessage({module: 'rfid', ...msg})
-}
-
 function sendAccessGranted(cardkey, fullname) {
-    sendMessage({topic: 'accessGranted', cardkey, fullname})
+    sendMessage('accessGranted', {cardkey, fullname})
 }
 
 function sendAccessDenied(cardkey, fullname, error = '') {
-    sendMessage({topic: 'accessDenied', cardkey, fullname, error})
+    sendMessage('accessDenied', {cardkey, fullname, error})
 }
 
 function getUserByCardkey(users, cardkey) {
