@@ -18,6 +18,12 @@ function execSync(file, args=[], {shell=false, timeout=5000} = {}) {
   return ps.stdout.toString()
 }
 
+function shell(cmd, timeout=5000) {
+  try {
+    return child_process.execSync(cmd, {timeout}).toString()
+  } catch(e) {}
+}
+
 function sendMessageFactory(moduleName, parentPort) {
   return function sendMessage(topic, msgObject) {
     parentPort.postMessage({module: moduleName, topic, ...msgObject})
@@ -26,6 +32,7 @@ function sendMessageFactory(moduleName, parentPort) {
 
 module.exports = {
   execSync,
+  shell,
   sendMessageFactory,
 }
 
