@@ -8,6 +8,9 @@ const scripts = [
   'rfid.js',
   'access.js',
   'thermometer.js',
+  'check-link.js',
+  'check-ping.js',
+  'check-card.js',
 ]
 
 const workers = []

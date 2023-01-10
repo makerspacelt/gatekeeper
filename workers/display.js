@@ -19,6 +19,7 @@ const systemStatus = {
 }
 
 let displayIteration = 0
+var mainText = 'TODO XXX'
 
 function createImage() {
   const iconFontPath = path.resolve(__dirname, '../open-iconic.otf')
@@ -39,8 +40,6 @@ function createImage() {
     const time = dt.toISOString().slice(11, -8)
     topRightText = time
   }
-
-  const mainText = 'TODO XXX'
 
   const args = [
     '-size', '128x64', 'pattern:gray100',
@@ -118,6 +117,26 @@ function main() {
     if (message.topic == 'temperature') {
       systemStatus.temperature = message.value
     }
+
+    // statuses
+    if (message.module == 'mqtt' && message.topic == 'status') {
+        systemStatus.mqtt = message.value
+    }
+    if (message.topic == 'link-status') {
+        systemStatus.link = message.value
+    }
+    if (message.topic == 'ping-status') {
+        systemStatus.ping = message.value
+    }
+    if (message.topic == 'card-status') {
+        systemStatus.card = message.value
+    }
+
+    // messages
+    if (message.module == 'mqtt' && message.topic == 'displayMessage') {
+        mainText = message.value
+    }
+
   })
 }
 
