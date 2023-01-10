@@ -6,13 +6,14 @@ const scripts = [
   'gpio.js',
   'mqtt.js',
   'rfid.js',
-  'get-temperature.js',
+  'access.js',
+  'thermometer.js',
 ]
 
 const workers = []
 
 for (const script of scripts) {
-    const worker = new Worker(path.resolve(script), {
+    const worker = new Worker(path.resolve(`workers/${script}`), {
         trackUnmanagedFds: true,
     })
     worker.once('error', (error) => {
@@ -25,7 +26,7 @@ for (const script of scripts) {
 for (const worker of workers) {
     worker.on('message', message => {
         const dtFmt = new Date().toJSON()
-        process.stdout.write(`[${dtFmt}] parent got msg: ${JSON.stringify(message)}\n`)
+        process.stdout.write(`[${dtFmt}] ${JSON.stringify(message)}\n`)
         for (const w of workers) {
             w.postMessage(message)
         }

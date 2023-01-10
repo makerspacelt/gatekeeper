@@ -1,4 +1,4 @@
-const { execSync } = require('./utils')
+const { execSync } = require('../utils')
 const path = require('path')
 const { isMainThread, parentPort } = require('worker_threads')
 
@@ -21,7 +21,7 @@ const systemStatus = {
 let displayIteration = 0
 
 function createImage() {
-  const iconFontPath = path.resolve(__dirname, 'open-iconic.otf')
+  const iconFontPath = path.resolve(__dirname, '../open-iconic.otf')
 
   const topLeftText = [
     icons.link[systemStatus.link],
@@ -116,7 +116,7 @@ function main() {
 
   parentPort.on('message', message => {
     if (message.topic == 'temperature') {
-      systemStatus.temperature = message.temperature
+      systemStatus.temperature = message.value
     }
   })
 }

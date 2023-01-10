@@ -1,6 +1,6 @@
 const { parentPort } = require('worker_threads')
 const mqtt = require("mqtt")
-const { shell, sendMessageFactory } = require('./utils')
+const { shell, sendMessageFactory } = require('../utils')
 const sendMessage = sendMessageFactory('mqtt', parentPort)
 sendMessage('loading', {})
 
@@ -49,7 +49,7 @@ parentPort.on('message', message => {
         client.publish(`${config.mqtt.topic}/${message.role}/get`, message.value.toString())
      }
      if (message.module == 'thermometer' &&  message.topic == 'temperature') {
-        client.publish(`${config.mqtt.topic}/temperature/get`, message.temperature.toString())
+        client.publish(`${config.mqtt.topic}/temperature/get`, message.value.toString())
      }
      if (message.module == 'display' &&  message.topic == 'message') {
         client.publish(`${config.mqtt.topic}/message/get`, message.value.toString())

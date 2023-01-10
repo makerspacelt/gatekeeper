@@ -1,10 +1,10 @@
 const { parentPort } = require('worker_threads')
-const { shell } = require('./utils')
 const fs = require('fs')
-const { sendMessageFactory } = require('./utils')
+const { shell, sendMessageFactory } = require('../utils')
 const sendMessage = sendMessageFactory('gpio', parentPort)
+sendMessage('loading', {})
 
-const pins = [
+const config = {pins:[
     {role: 'exitButton', name:  'sw1', number:   1, direction:  'in', value: 0, invert: true},
     {role:          'b', name:  'sw2', number:   0, direction:  'in', value: 0, invert: true},
     {role:          'c', name:  'sw3', number:   3, direction:  'in', value: 0, invert: true},
@@ -13,10 +13,10 @@ const pins = [
     {role: 'doorMagnet', name: 'rel1', number:   7, direction: 'out', value: 0, invert: false},
     {role:          'g', name: 'rel2', number: 199, direction: 'out', value: 0, invert: false},
     {role:          'h', name: 'rel3', number: 198, direction: 'out', value: 0, invert: false},
-]
+]}
 
 function getPinBy(field, value) {
-    return pins.find(p => p[field] == value)
+    return config.pins.find(p => p[field] == value)
 }
 function invert(value) {
     return (value==1)?0:1
@@ -31,7 +31,7 @@ function ioSet(pin, value) {
 }
 
 function setup() {
-    for (const pin of pins) {
+    for (const pin of config.pins) {
         shell(`echo ${pin.number}    2>/dev/null > /sys/class/gpio/unexport`)
         shell(`echo ${pin.number}    2>/dev/null > /sys/class/gpio/export`)
         shell(`echo ${pin.direction} 2>/dev/null > /sys/class/gpio/gpio${pin.number}/direction`)
@@ -44,18 +44,21 @@ function setup() {
 
 function onPinStateChange(pin) {
     pin.value = ioGet(pin)
-    sendMessage('pinChange', pin)
+    sendMessage('pinChange', {role:pin.role, direction:pin.direction, value:pin.value})
 }
 
 parentPort.on('message', message => {
-    if (message.module == 'gpio' &&  message.topic == 'pinChange') {
+    if (message.topic == 'pinChange') {
         if (message.role == 'exitButton') ioSet(getPinBy('role', 'doorMagnet'), message.value)
         if (message.role == "b")          ioSet(getPinBy('role', 'g'), message.value)
         if (message.role == "c")          ioSet(getPinBy('role', 'h'), message.value)
         if (message.role == 'spacePower') ioSet(getPinBy('role', 'buzzer'), message.value)
     }
+    if (message.module == 'mqtt' && message.topic == 'pinSet') {
+        if (message.role == 'buzzer') ioSet(getPinBy('role', 'buzzer'), message.value)
+    }
+
 })
 
-console.log('Loading gpio.js')
 setup();
 
