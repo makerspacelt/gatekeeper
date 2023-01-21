@@ -2,29 +2,30 @@ const { parentPort } = require('worker_threads')
 const mqtt = require("mqtt")
 const { shell, sendMessageFactory } = require('../utils')
 const sendMessage = sendMessageFactory('mqtt', parentPort)
+const config = require('../config')
 sendMessage('loading', {})
 
-const hostname = shell("host $(hostname -I) | rev | cut -d' ' -f1 | rev | cut -d. -f1").trim();
-
-const config = {mqtt:{
-    proto: 'mqtt',
-    host: 'broker.lan',
-    port: 1883,
-    user: 'user',
-    pass: 'pass',
-    topic: `tmp/device/${hostname}`,
-}}
+const hostname = shell("dig +short -x $(hostname -I)").trim().split('.')[0]
+const topicPrefix = `${config.mqtt.topicPrefix}/${hostname}`
 
 const url = `${config.mqtt.proto}://${config.mqtt.host}:${config.mqtt.port}`
-const client = mqtt.connect(url, {username:config.mqtt.user, password:config.mqtt.pass})
+const client = mqtt.connect(url, {
+    username: config.mqtt.user,
+    password: config.mqtt.pass,
+    will: {
+        topic: `${topicPrefix}/system/online/get`,
+        payload: "0",
+    },
+})
 
-client.subscribe(`${config.mqtt.topic}/buzzer/set`)
-client.subscribe(`${config.mqtt.topic}/message/set`)
+client.subscribe(`${topicPrefix}/buzzer/set`)
+client.subscribe(`${topicPrefix}/message/set`)
 
 client.on('connect', ()=>{
     sendMessage('status', {value:1})
-    client.publish(  `${config.mqtt.topic}/buzzer/set`, '0')
-    client.publish(  `${config.mqtt.topic}/message/set`, '    MQTT\n CONNECTED')
+    client.publish(`${topicPrefix}/buzzer/set`, '0')
+    client.publish(`${topicPrefix}/message/set`, '    MQTT\n CONNECTED')
+    client.publish(`${topicPrefix}/system/online/get`, '1')
 })
 
 client.on('offline', ()=>{
@@ -33,11 +34,11 @@ client.on('offline', ()=>{
 
 client.on('message', (topic, message) => {
     message=message.toString()
-    if (topic == `${config.mqtt.topic}/buzzer/set`) {
+    if (topic == `${topicPrefix}/buzzer/set`) {
         sendMessage('pinSet', {role:'buzzer', value:message})
         return
     }
-    if (topic == `${config.mqtt.topic}/message/set`) {
+    if (topic == `${topicPrefix}/message/set`) {
         sendMessage('displayMessage', {value:message})
         return
     }
@@ -46,13 +47,13 @@ client.on('message', (topic, message) => {
 
 parentPort.on('message', message => {
      if (message.module == 'gpio' &&  message.topic == 'pinChange') {
-        client.publish(`${config.mqtt.topic}/${message.role}/get`, message.value.toString())
+        client.publish(`${topicPrefix}/${message.role}/get`, message.value.toString())
      }
      if (message.module == 'thermometer' &&  message.topic == 'temperature') {
-        client.publish(`${config.mqtt.topic}/temperature/get`, message.value.toString())
+        client.publish(`${topicPrefix}/temperature/get`, message.value.toString())
      }
      if (message.module == 'display' &&  message.topic == 'message') {
-        client.publish(`${config.mqtt.topic}/message/get`, message.value.toString())
+        client.publish(`${topicPrefix}/message/get`, message.value.toString())
      }
 })
 

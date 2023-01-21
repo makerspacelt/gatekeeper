@@ -1,19 +1,9 @@
 const { parentPort } = require('worker_threads')
 const fs = require('fs')
-const { shell, sendMessageFactory } = require('../utils')
+const { shell, sendMessageFactory, writeFileSilent } = require('../utils')
 const sendMessage = sendMessageFactory('gpio', parentPort)
+const config = require('../config')
 sendMessage('loading', {})
-
-const config = {pins:[
-    {role: 'exitButton', name:  'sw1', number:   1, direction:  'in', value: 0, invert: true},
-    {role:          'b', name:  'sw2', number:   0, direction:  'in', value: 0, invert: true},
-    {role:          'c', name:  'sw3', number:   3, direction:  'in', value: 0, invert: true},
-    {role: 'spacePower', name:  'sw4', number:   2, direction:  'in', value: 0, invert: true},
-    {role:     'buzzer', name:  'buz', number:   6, direction: 'out', value: 0, invert: false},
-    {role: 'doorMagnet', name: 'rel1', number:   7, direction: 'out', value: 0, invert: false},
-    {role:          'g', name: 'rel2', number: 199, direction: 'out', value: 0, invert: false},
-    {role:          'h', name: 'rel3', number: 198, direction: 'out', value: 0, invert: false},
-]}
 
 function getPinBy(field, value) {
     return config.pins.find(p => p[field] == value)
@@ -26,18 +16,21 @@ function ioGet(pin) {
     return (pin.invert)?invert(value):value
 }
 function ioSet(pin, value) {
-    value = (pin.invert)?invert(value):value
+    value = (pin.invert) ? invert(value) : value
+    value = (value == 1) ? 1 : 0
     fs.writeFileSync(`/sys/class/gpio/gpio${pin.number}/value`, value)
 }
 
 function setup() {
     for (const pin of config.pins) {
-        shell(`echo ${pin.number}    2>/dev/null > /sys/class/gpio/unexport`)
-        shell(`echo ${pin.number}    2>/dev/null > /sys/class/gpio/export`)
-        shell(`echo ${pin.direction} 2>/dev/null > /sys/class/gpio/gpio${pin.number}/direction`)
-        shell(`echo ${pin.value}     2>/dev/null > /sys/class/gpio/gpio${pin.number}/value`)
-        shell(`echo both             2>/dev/null > /sys/class/gpio/gpio${pin.number}/edge`)
+        writeFileSilent(`/sys/class/gpio/unexport`,                    pin.number)
+        writeFileSilent(`/sys/class/gpio/export`,                      pin.number)
+        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/direction`, pin.direction)
+        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/value`,     pin.value)
+        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/edge`,      'both')
+
         fs.watch(`/sys/class/gpio/gpio${pin.number}/value`, () => onPinStateChange(pin))
+
         onPinStateChange(pin)
     }
 }

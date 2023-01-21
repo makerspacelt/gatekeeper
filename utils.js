@@ -1,3 +1,4 @@
+const fs = require('fs')
 const child_process = require('child_process')
 
 
@@ -30,9 +31,17 @@ function sendMessageFactory(moduleName, parentPort) {
   }
 }
 
+function writeFileSilent(fn, value) {
+  try {
+    fs.writeFileSync(fn, value)
+  } catch (e) {
+  }
+}
+
 module.exports = {
   execSync,
   shell,
   sendMessageFactory,
+  writeFileSilent,
 }
 

@@ -19,7 +19,7 @@ const systemStatus = {
 }
 
 let displayIteration = 0
-var mainText = 'TODO XXX'
+var mainText = 'loading'
 
 function createImage() {
   const iconFontPath = path.resolve(__dirname, '../open-iconic.otf')

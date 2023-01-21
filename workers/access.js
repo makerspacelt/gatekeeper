@@ -1,12 +1,10 @@
 const fs = require('fs')
 const { sendMessageFactory } = require('../utils')
 const { parentPort } = require('worker_threads')
+const config = require('../config')
 const sendMessage = sendMessageFactory('access', parentPort)
 sendMessage('loading', {})
 
-const config = {access:{
-    database_file: './example_db.json',
-}}
 
 function sendAccessGranted(card, fullname) {
     sendMessage('accessGranted', {card, fullname})
