@@ -55,5 +55,16 @@ parentPort.on('message', message => {
      if (message.module == 'display' &&  message.topic == 'message') {
         client.publish(`${topicPrefix}/display/message/get`, message.value.toString())
      }
+     if (message.module == 'access') {
+        if (message.topic == 'accessDenied') {
+            client.publish(`${topicPrefix}/access/denied/get`, message.fullname)
+        }
+        if (message.topic == 'accessGranted') {
+            client.publish(`${topicPrefix}/access/granted/get`, message.fullname)
+        }
+        if (message.topic == 'exitGranted') {
+            client.publish(`${topicPrefix}/access/exit/get`, "1")
+        }
+     }
 })
 
