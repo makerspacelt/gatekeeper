@@ -44,7 +44,7 @@ function createImage() {
   }
   else {
     const dt = new Date()
-    const time = dt.toISOString().slice(11, -8)
+    const time = dt.toLocaleTimeString('LT-lt').slice(0, 5)
     topRightText = time
   }
 
