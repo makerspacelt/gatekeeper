@@ -18,13 +18,13 @@ const client = mqtt.connect(url, {
     },
 })
 
-client.subscribe(`${topicPrefix}/buzzer/set`)
-client.subscribe(`${topicPrefix}/message/set`)
+client.subscribe(`${topicPrefix}/gpio/buzzer/set`)
+client.subscribe(`${topicPrefix}/display/message/set`)
 
 client.on('connect', ()=>{
     sendMessage('status', {value:1})
-    client.publish(`${topicPrefix}/buzzer/set`, '0')
-    client.publish(`${topicPrefix}/message/set`, '    MQTT\n CONNECTED')
+    client.publish(`${topicPrefix}/gpio/buzzer/set`, '0')
+    client.publish(`${topicPrefix}/display/message/set`, '    MQTT\n Connected')
     client.publish(`${topicPrefix}/system/online/get`, '1')
 })
 
@@ -34,11 +34,11 @@ client.on('offline', ()=>{
 
 client.on('message', (topic, message) => {
     message=message.toString()
-    if (topic == `${topicPrefix}/buzzer/set`) {
+    if (topic == `${topicPrefix}/gpio/buzzer/set`) {
         sendMessage('pinSet', {role:'buzzer', value:message})
         return
     }
-    if (topic == `${topicPrefix}/message/set`) {
+    if (topic == `${topicPrefix}/display/message/set`) {
         sendMessage('displayMessage', {value:message})
         return
     }
@@ -47,13 +47,13 @@ client.on('message', (topic, message) => {
 
 parentPort.on('message', message => {
      if (message.module == 'gpio' &&  message.topic == 'pinChange') {
-        client.publish(`${topicPrefix}/${message.role}/get`, message.value.toString())
+        client.publish(`${topicPrefix}/gpio/${message.role}/get`, message.value.toString())
      }
      if (message.module == 'thermometer' &&  message.topic == 'temperature') {
-        client.publish(`${topicPrefix}/temperature/get`, message.value.toString())
+        client.publish(`${topicPrefix}/ds18b20/temp/get`, message.value.toString())
      }
      if (message.module == 'display' &&  message.topic == 'message') {
-        client.publish(`${topicPrefix}/message/get`, message.value.toString())
+        client.publish(`${topicPrefix}/display/message/get`, message.value.toString())
      }
 })
 
