@@ -5,6 +5,9 @@ const config = require('../config')
 const sendMessage = sendMessageFactory('access', parentPort)
 sendMessage('loading', {})
 
+function sendExitGranted() {
+    sendMessage('exitGranted', {})
+}
 
 function sendAccessGranted(card, fullname) {
     sendMessage('accessGranted', {card, fullname})
@@ -47,6 +50,9 @@ function checkAccess(cardkey) {
 parentPort.on('message', message => {
      if (message.module == 'rfid' &&  message.topic == 'cardScan') {
         checkAccess(message.value);
+     }
+     if (message.module == 'gpio' &&  message.role == 'exitButton' && message.value == 1) {
+        sendExitGranted();
      }
 })
 

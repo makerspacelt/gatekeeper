@@ -40,16 +40,47 @@ function onPinStateChange(pin) {
     sendMessage('pinChange', {role:pin.role, direction:pin.direction, value:pin.value})
 }
 
+function unlockDoor() {
+    ioSet(getPinBy('role', 'doorMagnet'), 1);
+    setTimeout( ()=>{
+        ioSet(getPinBy('role', 'doorMagnet'), 0)
+    }, 3000);
+}
+
+function beep(ms) {
+    ioSet(getPinBy('role', 'buzzer'), 1);
+    setTimeout( ()=>{
+        ioSet(getPinBy('role', 'buzzer'), 0)
+    }, ms);
+}
+function beepGood() { beep( 200); }
+function beepBad()  { beep(1000); }
+
+
+
 parentPort.on('message', message => {
     if (message.topic == 'pinChange') {
-        if (message.role == 'exitButton') ioSet(getPinBy('role', 'doorMagnet'), message.value)
         if (message.role == "b")          ioSet(getPinBy('role', 'g'), message.value)
         if (message.role == "c")          ioSet(getPinBy('role', 'h'), message.value)
         if (message.role == 'spacePower') ioSet(getPinBy('role', 'buzzer'), message.value)
     }
     if (message.module == 'mqtt' && message.topic == 'pinSet') {
-        if (message.role == 'buzzer') ioSet(getPinBy('role', 'buzzer'), message.value)
+        if (message.role == 'buzzer' && message.value == 1) {
+            beepGood();
+        } else {
+            beepBad();
+        }
     }
+    if (message.module == 'access') {
+        if (message.topic == 'accessGranted' || message.topic == 'exitGranted') {
+            unlockDoor();
+            beepGood();
+        }
+        if (message.topic == 'accessDenied') {
+            beepBad();
+        }
+    }
+
 
 })
 
