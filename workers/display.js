@@ -110,6 +110,7 @@ function main() {
   console.log('display worker hello')
 
   displaySetup()
+  setInterval(displaySetup, 10003)
 
   setInterval(displayUpdate, 1000)
 
