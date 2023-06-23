@@ -1,6 +1,8 @@
-const { execSync } = require('../utils')
+const { execSync, sendMessageFactory } = require('../utils')
 const path = require('path')
 const { isMainThread, parentPort } = require('worker_threads')
+const sendMessage = sendMessageFactory('display', parentPort)
+sendMessage('loading', {})
 
 
 const icons = {
@@ -20,6 +22,11 @@ const systemStatus = {
 
 let displayIteration = 0
 var mainText = 'loading'
+
+function showMessage(msg) {
+    sendMessage('message', {value:msg})
+    mainText=msg
+}
 
 function createImage() {
   const iconFontPath = path.resolve(__dirname, '../open-iconic.otf')
@@ -135,17 +142,17 @@ function main() {
 
     // messages
     if (message.module == 'mqtt' && message.topic == 'displayMessage') {
-        mainText = message.value
+        showMessage(message.value)
     }
     if (message.module == 'access') {
         if ( message.topic == 'exitGranted') {
-            mainText = "BUTTON has\nGRANTED the EXIT"
+            showMessage("BUTTON has\nGRANTED the EXIT")
         }
         if (message.topic == 'accessGranted') {
-            mainText = "Access Granted:\n"+message.fullname
+            showMessage("Access Granted:\n"+message.fullname)
         }
         if (message.topic == 'accessDenied') {
-            mainText = "Access \n         DENIED"
+            showMessage("Access \n         DENIED")
         }
     }
 
