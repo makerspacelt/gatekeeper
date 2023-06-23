@@ -136,14 +136,17 @@ function main() {
     if (message.module == 'mqtt' && message.topic == 'displayMessage') {
         mainText = message.value
     }
-    if (message.module == 'access' && message.topic == 'accessGranted') {
-        mainText = "Access Granted:\n"+message.fullname
+    if (message.module == 'access') {
+        if ( message.topic == 'exitGranted') {
+            mainText = "BUTTON has\nGRANTED the EXIT"
+        }
+        if (message.topic == 'accessGranted') {
+            mainText = "Access Granted:\n"+message.fullname
+        }
+        if (message.topic == 'accessDenied') {
+            mainText = "Access \n         DENIED"
+        }
     }
-    if (message.module == 'access' && message.topic == 'accessDenied') {
-        mainText = "Access \n         DENIED"
-    }
-
-
 
   })
 }
