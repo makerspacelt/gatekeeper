@@ -19,5 +19,9 @@ module.exports = {
       { role: 'doorMagnet', name: 'rel1', number:   7, direction: 'out', value: 1, invert: true },
       { role:          'g', name: 'rel2', number: 199, direction: 'out', value: 0, invert: false },
       { role:          'h', name: 'rel3', number: 198, direction: 'out', value: 0, invert: false },
-   ]
+   ],
+   slack: {
+      // webhookURL: 'https://hooks.slack.com/triggers/...',
+   },
 }
+

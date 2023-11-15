@@ -7,6 +7,7 @@ const scripts = [
   'mqtt.js',
   'rfid.js',
   'access.js',
+  'slack.js',
   'thermometer.js',
   'check-link.js',
   'check-ping.js',
