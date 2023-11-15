@@ -18,15 +18,15 @@ function ioGet(pin) {
 function ioSet(pin, value) {
     value = (pin.invert) ? invert(value) : value
     value = (value == 1) ? 1 : 0
-    fs.writeFileSync(`/sys/class/gpio/gpio${pin.number}/value`, value)
+    fs.writeFileSync(`/sys/class/gpio/gpio${pin.number}/value`, `${value}`)
 }
 
 function setup() {
     for (const pin of config.pins) {
-        writeFileSilent(`/sys/class/gpio/unexport`,                    pin.number)
-        writeFileSilent(`/sys/class/gpio/export`,                      pin.number)
-        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/direction`, pin.direction)
-        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/value`,     pin.value)
+        writeFileSilent(`/sys/class/gpio/unexport`,                    `${pin.number}`)
+        writeFileSilent(`/sys/class/gpio/export`,                      `${pin.number}`)
+        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/direction`, `${pin.direction}`)
+        writeFileSilent(`/sys/class/gpio/gpio${pin.number}/value`,     `${pin.value}`)
         writeFileSilent(`/sys/class/gpio/gpio${pin.number}/edge`,      'both')
 
         fs.watch(`/sys/class/gpio/gpio${pin.number}/value`, () => onPinStateChange(pin))
