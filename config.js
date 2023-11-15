@@ -16,7 +16,7 @@ module.exports = {
       { role:          'c', name:  'sw3', number:   3, direction:  'in', value: 0, invert: true },
       { role: 'spacePower', name:  'sw4', number:   2, direction:  'in', value: 0, invert: true },
       { role:     'buzzer', name:  'buz', number:   6, direction: 'out', value: 0, invert: false },
-      { role: 'doorMagnet', name: 'rel1', number:   7, direction: 'out', value: 0, invert: false },
+      { role: 'doorMagnet', name: 'rel1', number:   7, direction: 'out', value: 1, invert: true },
       { role:          'g', name: 'rel2', number: 199, direction: 'out', value: 0, invert: false },
       { role:          'h', name: 'rel3', number: 198, direction: 'out', value: 0, invert: false },
    ]
