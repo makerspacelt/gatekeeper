@@ -17,7 +17,6 @@ const scripts = [
   'thermometer.js',
   'check-link.js',
   'check-ping.js',
-  'check-card.js',
 ]
 
 const workers = []
@@ -52,3 +51,4 @@ for (const script of scripts) {
 for (const worker of workers) {
     worker.on('message', broadcastMessage)
 }
+
