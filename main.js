@@ -1,12 +1,18 @@
 const path = require('path')
 const { Worker } = require('worker_threads')
+const { sendMessageFactory } = require('./utils')
+
+// If one of these throws an error, we exit
+const criticalScripts = [
+  'access.js',
+  'gpio.js',
+  'rfid.js',
+]
 
 const scripts = [
+  ...criticalScripts,
   'display.js',
-  'gpio.js',
   'mqtt.js',
-  'rfid.js',
-  'access.js',
   'slack.js',
   'thermometer.js',
   'check-link.js',
@@ -16,24 +22,33 @@ const scripts = [
 
 const workers = []
 
+let deadWorkers = 0
+
+function broadcastMessage(message) {
+    const dtFmt = new Date().toJSON()
+    console.error(`[${dtFmt}] ${JSON.stringify(message)}\n`)
+    for (const w of workers) {
+        w.postMessage(message)
+    }
+}
+
 for (const script of scripts) {
     const worker = new Worker(path.resolve(`workers/${script}`), {
         trackUnmanagedFds: true,
     })
-    worker.once('error', (error) => {
-      console.error(`Error from ${script}:`, error)
-      process.exit(1)
-    })
     workers.push(worker)
+
+    worker.once('error', (error) => {
+        console.error(`Error from ${script}:`, error)
+        if (criticalScripts.includes(script)) {
+            process.exit(1)
+            return
+        }
+        deadWorkers++
+        broadcastMessage({module: 'main', topic: 'dead-worker-count', value: deadWorkers})
+    })
 }
 
 for (const worker of workers) {
-    worker.on('message', message => {
-        const dtFmt = new Date().toJSON()
-        process.stdout.write(`[${dtFmt}] ${JSON.stringify(message)}\n`)
-        for (const w of workers) {
-            w.postMessage(message)
-        }
-    })
+    worker.on('message', broadcastMessage)
 }
-

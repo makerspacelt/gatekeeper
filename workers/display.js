@@ -9,14 +9,14 @@ const icons = {
   link: ['\ue017', '\ue0b8'],
   mqtt: ['\ue0b1', '\ue03f'],
   ping: ['\ue0d8', '\ue0ae'],
-  card: ['\ue039', '\ue04b']
+  dead: ['\ue0cc', '\ue0cb'],
 }
 
 const systemStatus = {
   link: 0,
   mqtt: 0,
   ping: 0,
-  card: 0,
+  dead: 0,
   temperature: 0,
 }
 
@@ -35,7 +35,7 @@ function createImage() {
     icons.link[systemStatus.link],
     icons.mqtt[systemStatus.mqtt],
     icons.ping[systemStatus.ping],
-    icons.card[systemStatus.card],
+    icons.dead[systemStatus.dead]
   ].join('')
 
   let topRightText = ''
@@ -136,14 +136,15 @@ function main() {
     if (message.topic == 'ping-status') {
         systemStatus.ping = message.value
     }
-    if (message.topic == 'card-status') {
-        systemStatus.card = message.value
+    if (message.topic == 'dead-worker-count') {
+        systemStatus.dead = 1
     }
 
     // messages
     if (message.module == 'mqtt' && message.topic == 'displayMessage') {
         showMessage(message.value)
     }
+
     if (message.module == 'access') {
         if ( message.topic == 'exitGranted') {
             showMessage("BUTTON has\nGRANTED the EXIT")
