@@ -119,7 +119,7 @@ function main() {
   displaySetup()
   setInterval(displaySetup, 10003)
 
-  setInterval(displayUpdate, 1000)
+  setInterval(displayUpdate, 200)
 
   parentPort.on('message', message => {
     if (message.topic == 'temperature') {
