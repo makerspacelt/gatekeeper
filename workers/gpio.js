@@ -53,8 +53,8 @@ function beep(ms) {
         ioSet(getPinBy('role', 'buzzer'), 0)
     }, ms);
 }
-function beepGood() { beep( 200); }
-function beepBad()  { beep(1000); }
+function beepGood() { beep( 150); }
+function beepBad()  { beep( 800); }
 
 
 
