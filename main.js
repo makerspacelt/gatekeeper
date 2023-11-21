@@ -25,7 +25,7 @@ let deadWorkers = 0
 
 function broadcastMessage(message) {
     const dtFmt = new Date().toJSON()
-    console.error(`[${dtFmt}] ${JSON.stringify(message)}\n`)
+    console.error(`[${dtFmt}] ${JSON.stringify(message)}`)
     for (const w of workers) {
         w.postMessage(message)
     }
