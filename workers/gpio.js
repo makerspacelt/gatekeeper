@@ -62,7 +62,6 @@ parentPort.on('message', message => {
     if (message.topic == 'pinChange') {
         if (message.role == "b")          ioSet(getPinBy('role', 'g'), message.value)
         if (message.role == "c")          ioSet(getPinBy('role', 'h'), message.value)
-        if (message.role == 'spacePower') ioSet(getPinBy('role', 'buzzer'), message.value)
     }
     if (message.module == 'mqtt' && message.topic == 'pinSet') {
         if (message.role == 'buzzer' && message.value == 1) {
