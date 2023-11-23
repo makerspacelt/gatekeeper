@@ -6,7 +6,7 @@ sendMessage('loading', {})
 
 function getTemperature() {
   const temperatureRaw = shell('cat /sys/bus/w1/devices/28-*/temperature')
-  const temperature = (temperatureRaw / 1000)
+  const temperature = (temperatureRaw / 1000) -6.5 //raw reading to high, calibrating down
   return temperature
 }
 
