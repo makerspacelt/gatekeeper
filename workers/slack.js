@@ -8,6 +8,7 @@ if (!config.slack.webhookURL) {
 }
 
 async function sendSlackMessage(fullname) {
+  let responseStatus = 0
   try {
     const data = { text: fullname }
     const response = await fetch(config.slack.webhookURL, {
@@ -15,13 +16,14 @@ async function sendSlackMessage(fullname) {
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' },
     })
-    const rjson = await response.json()
-    if (!rjson.ok) {
-      console.log(`slack.js: error response from webhook: ${JSON.stringify(rjson)}`)
+    responseStatus = response.status
+    const responseBody = await response.text()
+    if (responseBody != 'ok') {
+      console.log(`slack.js: error response from webhook (status ${responseStatus}): ${responseBody}`)
     }
   }
   catch (error) {
-    console.log(`slack.js: exception from ${fullname}: ` + error.message)
+    console.log(`slack.js: exception from ${fullname}: ${error.message}. Slack response status: ${responseStatus}`)
   }
 }
 
