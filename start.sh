@@ -6,6 +6,9 @@ echo $! > /run/gatekeeper.pid
 
 goReboot()
 {
+	checkHealth
+	echo "ERROR: checkHealth return $?"
+
 	for i in {1..20}; do
 		echo 1 >/sys/class/gpio/gpio6/value
 		sleep 0.2
